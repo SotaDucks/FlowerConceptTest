@@ -11,6 +11,8 @@ npm run dev
 
 打开 http://localhost:5173 。底图会在启动时做边缘分析，所以必须通过本地服务器打开，不能直接双击 html。打包用 `npm run build`，再用 `npm run preview` 预览。
 
+在线版本：https://sotaducks.github.io/FlowerConceptTest/ 。修改后运行 `npm run deploy` 即可重新构建，并发布到 `gh-pages` 分支（GitHub Pages）。
+
 ## 播放器
 
 | 操作 | 快捷键 |
