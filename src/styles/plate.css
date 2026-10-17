@@ -1,0 +1,50 @@
+/* ---------- plate ---------- */
+.plate { position: absolute; inset: 0; overflow: hidden; }
+.plate-inner { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.plate-img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; user-select: none; }
+.plate-mirror-l { left: -100%; transform: scaleX(-1); }
+.plate-mirror-r { left: 100%; transform: scaleX(-1); }
+.plate-natural { opacity: 0; }
+.plate-tint {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 52% 45%, transparent 45%, rgba(2, 8, 12, 0.45) 100%),
+    linear-gradient(180deg, rgba(60, 150, 180, 0.22), rgba(20, 60, 80, 0.3));
+  mix-blend-mode: multiply;
+}
+.feat { position: absolute; left: 0; top: 0; pointer-events: none; }
+
+/* ---------- identity bar ---------- */
+.idbar {
+  position: absolute; display: flex; align-items: center; gap: 22px; height: 76px;
+  padding: 0 26px 0 0; white-space: nowrap;
+  background: linear-gradient(90deg, rgba(6, 16, 22, 0.88), rgba(6, 16, 22, 0.55));
+  border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line);
+}
+.idbar::before { content: ""; width: 4px; align-self: stretch; background: var(--cyan); box-shadow: 0 0 12px var(--cyan-glow); }
+.idb-id { display: flex; align-items: baseline; gap: 12px; }
+.idb-kind { font-size: 22px; font-weight: 700; letter-spacing: 0.2em; color: var(--cyan); min-width: 128px; }
+.idb-no { font-size: 46px; font-weight: 500; color: var(--hi); line-height: 1; letter-spacing: 0.04em; }
+.idb-cn { font-size: 24px; color: var(--hi); font-weight: 500; margin-left: 6px; }
+.idb-sep { width: 1px; height: 42px; background: var(--line2); }
+.idb-cls { display: flex; align-items: center; gap: 14px; }
+.idb-k { display: flex; flex-direction: column; font-size: 12px; color: var(--ink-dim); line-height: 1.3; }
+.idb-k .en { font-size: 11px; letter-spacing: 0.2em; font-weight: 600; }
+.idb-cv { display: flex; align-items: baseline; gap: 10px; }
+.idb-cv-en { font-size: 30px; font-weight: 700; color: var(--hi); letter-spacing: 0.16em; }
+.idb-cv-cn { font-size: 28px; font-weight: 700; color: var(--hi); }
+.idbar .stag-en, .idbar .stag-cn { font-size: 19px; }
+.idbar.flash { box-shadow: inset 0 0 40px rgba(111, 231, 255, 0.18); }
+
+/* ---------- inset ---------- */
+.inset { position: relative; overflow: hidden; border: 1px solid var(--line2); background: #000; }
+.inset-img { position: absolute; inset: 0; background-repeat: no-repeat; }
+.inset.mono-mode .inset-img { filter: grayscale(1) contrast(2.4) brightness(0.9) !important; }
+.inset.mono-mode::after { content: ""; position: absolute; inset: 0; background: rgba(40, 170, 210, 0.45); mix-blend-mode: color; }
+.inset-grid {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(rgba(111, 231, 255, 0.1) 1px, transparent 1px) 0 0 / 100% 25%,
+    linear-gradient(90deg, rgba(111, 231, 255, 0.1) 1px, transparent 1px) 0 0 / 12.5% 100%;
+}
+.inset-scan { position: absolute; left: 0; right: 0; top: var(--scan, 0%); height: 2px; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); opacity: 0.8; }

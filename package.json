@@ -1,0 +1,22 @@
+{
+  "name": "nature-reconstruction-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "NATURE RECONSTRUCTION / 自然重建 — seven-shot screen UI player",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/chakra-petch": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/noto-sans-sc": "^5.3.1",
+    "@fontsource/rajdhani": "^5.3.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+}

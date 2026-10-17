@@ -1,0 +1,82 @@
+/* ==========================================================================
+   SHOT 5
+   ========================================================================== */
+.s5-plate { position: absolute; inset: 0; }
+.s5-tile-data { fill: rgba(111, 231, 255, 0.05); stroke: rgba(111, 231, 255, 0.32); stroke-width: 1; }
+.s5-tile-hole { fill: none; stroke: var(--amber); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.85; }
+.s5-tile-out { fill: none; stroke: rgba(255, 179, 64, 0.35); stroke-width: 1; stroke-dasharray: 2 6; }
+.s5-scanline { stroke: var(--cyan); stroke-width: 2; filter: drop-shadow(0 0 6px var(--cyan)); }
+.s5-boundary { stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 8 6; }
+.s5-halt { position: absolute; left: 0; top: 0; font-size: 12px; color: var(--amber); letter-spacing: 0.1em; background: rgba(4, 10, 14, 0.75); padding: 3px 8px; }
+.s5-htag, .s5-ptag, .s5-stabletag { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 3px 10px; border-left: 2px solid var(--cyan); background: rgba(4, 10, 14, 0.7); white-space: nowrap; }
+.s5-htag .en, .s5-ptag .en, .s5-stabletag .en { font-size: 11px; letter-spacing: 0.16em; color: var(--cyan); font-weight: 600; }
+.s5-htag span:last-child, .s5-ptag span:last-child, .s5-stabletag span:last-child { font-size: 16px; color: var(--hi); }
+.s5-rel { fill: none; stroke: var(--cyan); stroke-width: 1.5; }
+.s5-rel-stub { fill: none; stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.s5-rel-end path { stroke: var(--amber); stroke-width: 2; fill: none; }
+.s5-poll { fill: none; stroke: var(--hi); stroke-width: 1.4; }
+.s5-poll-unk { fill: none; stroke: var(--amber); stroke-width: 1.3; stroke-dasharray: 5 6; }
+.s5-pnode circle { fill: rgba(111, 231, 255, 0.2); stroke: var(--cyan); stroke-width: 1.5; }
+.s5-pnode circle.core { fill: var(--hi); stroke: none; }
+.s5-punk circle { fill: rgba(4, 10, 14, 0.8); stroke: var(--amber); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.s5-punk text { fill: var(--amber); font-family: var(--f-mono); font-size: 13px; }
+.s5-plbl { position: absolute; left: 0; top: 0; font-size: 11px; color: var(--cyan); white-space: nowrap; background: rgba(4, 10, 14, 0.7); padding: 2px 6px; }
+.s5-plbl.unk { color: var(--amber); }
+.s5-ug-grid { stroke: rgba(111, 231, 255, 0.09); stroke-width: 1; fill: none; }
+.s5-surface { stroke: var(--line-hi); stroke-width: 1.5; }
+.s5-ug-ticks { stroke: var(--line2); }
+.s5-ug-bound { fill: none; stroke: var(--amber); stroke-width: 1.6; }
+.s5-probe { stroke: var(--line-hi); stroke-width: 1.2; fill: none; }
+.s5-probe-tip rect { fill: rgba(4, 10, 14, 0.85); stroke: var(--amber); stroke-dasharray: 2 2; }
+.s5-probe-tip text { fill: var(--amber); font-family: var(--f-mono); font-size: 12px; }
+.s5-surf-lbl { position: absolute; left: 0; top: 0; font-size: 11px; color: var(--ink-dim); letter-spacing: 0.14em; }
+.s5-bound-lbl { position: absolute; left: 0; top: 0; font-size: 11px; color: var(--amber); letter-spacing: 0.08em; width: 350px; text-align: right; }
+.s5-ug-lbl { position: absolute; left: 70px; top: 830px; display: flex; gap: 12px; align-items: flex-start; padding: 10px 16px; background: rgba(4, 10, 14, 0.8); border: 1px dashed rgba(255, 179, 64, 0.55); }
+.s5-ug-ic { color: var(--amber); width: 26px; height: 26px; margin-top: 4px; }
+.s5-ug-cn { font-size: 26px; color: var(--hi); font-weight: 500; }
+.s5-ug-cn .sep { color: var(--ink-dim); margin: 0 4px; }
+.s5-ug-cn b { color: var(--amber); font-weight: 700; }
+.s5-ug-en { font-size: 12px; letter-spacing: 0.16em; color: var(--amber); font-weight: 600; margin-top: 2px; }
+.s5-col { position: absolute; left: 1322px; top: 100px; width: 550px; display: flex; flex-direction: column; gap: 18px; }
+.s5-row { position: relative; padding: 18px 22px 18px 26px; background: rgba(6, 14, 20, 0.72); border: 1px solid rgba(130, 215, 235, 0.14); }
+.s5-row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: currentColor; box-shadow: 0 0 12px currentColor; }
+.s5-row.tone-amber { color: var(--amber); background: linear-gradient(90deg, rgba(255, 179, 64, 0.08), rgba(6, 14, 20, 0.72) 60%); }
+.s5-row.tone-cyan { color: var(--cyan); background: linear-gradient(90deg, rgba(111, 231, 255, 0.1), rgba(6, 14, 20, 0.72) 60%); }
+.s5-row-h { display: flex; align-items: baseline; gap: 12px; }
+.s5-row-n { font-size: 12px; color: var(--ink-dim); }
+.s5-row-en { font-size: 24px; font-weight: 700; letter-spacing: 0.12em; color: var(--hi); }
+.s5-row-state { margin-left: auto; font-size: 20px; font-weight: 700; letter-spacing: 0.16em; padding: 2px 10px; border: 1px solid currentColor; }
+.s5-row-cn { font-size: 34px; font-weight: 700; color: var(--hi); margin: 8px 0 12px; }
+.s5-row-cn .sep { color: var(--ink-dim); margin: 0 6px; font-weight: 400; }
+.s5-row-cn b { color: currentColor; }
+.s5-row.tone-amber .s5-row-cn b { color: var(--amber); }
+.s5-row.tone-cyan .s5-row-cn b { color: var(--cyan); }
+.s5-g svg { display: block; }
+.mz-ok { fill: rgba(111, 231, 255, 0.16); stroke: rgba(111, 231, 255, 0.5); }
+.mz-miss { fill: none; stroke: var(--amber); stroke-dasharray: 3 3; }
+.nt-ok { stroke: var(--cyan); stroke-width: 1.5; fill: none; }
+.nt-unk { stroke: var(--amber); stroke-width: 1.3; stroke-dasharray: 5 5; fill: none; }
+.nt-root { fill: var(--hi); }
+.nt-n { fill: rgba(111, 231, 255, 0.3); stroke: var(--cyan); stroke-width: 1.5; }
+.nt-q { fill: #071018; stroke: var(--amber); stroke-dasharray: 3 3; stroke-width: 1.3; }
+.nt-t { fill: var(--amber); font-family: var(--f-mono); font-size: 11px; }
+.s5-morph { font-size: 11px; color: var(--cyan); letter-spacing: 0.08em; margin-top: 6px; }
+
+/* ==========================================================================
+   SHOT 6
+   ========================================================================== */
+.s6-dark { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2), #000 70%); }
+.s6-cmd { position: absolute; left: 50%; top: 950px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 10px 22px; border: 1px solid var(--line-hi); background: rgba(4, 10, 14, 0.85); white-space: nowrap; }
+.s6-cmd-ic { color: var(--hi); width: 22px; height: 22px; }
+.s6-cmd-t { font-size: 18px; color: var(--hi); }
+.s6-cmd-cn { font-size: 18px; color: var(--ink); }
+.s6-closing { position: absolute; left: 760px; top: 528px; width: 400px; text-align: center; font-size: 13px; color: var(--hi); letter-spacing: 0.16em; }
+.s6-bar { height: 3px; margin-top: 10px; background: rgba(234, 255, 255, 0.15); position: relative; }
+.s6-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--hi); width: 0; }
+.s6-closing.stuck .s6-closing-t { opacity: 0.6; }
+.s6-result { position: absolute; left: 460px; width: 1000px; top: 380px; height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: radial-gradient(ellipse at center, rgba(4, 8, 10, 0.9), rgba(4, 8, 10, 0.75) 55%, transparent 72%); }
+.s6-res-h { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-dim); letter-spacing: 0.14em; }
+.s6-mark { width: 12px; height: 12px; background: var(--red); box-shadow: 0 0 12px var(--red); }
+.s6-en { font-size: 44px; letter-spacing: 0.4em; padding-left: 0.4em; color: var(--red); font-weight: 600; height: 60px; white-space: nowrap; text-shadow: 0 0 20px rgba(255, 59, 48, 0.5); }
+.s6-cn { font-size: 132px; font-weight: 700; color: var(--red); letter-spacing: 0.14em; padding-left: 0.14em; line-height: 1.1; white-space: nowrap; text-shadow: 0 0 40px rgba(255, 59, 48, 0.45); }
