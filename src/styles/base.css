@@ -253,3 +253,5 @@ canvas { display: block; }
 .scanlines { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px); }
 .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.6) 100%); }
 .flash { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(220, 250, 255, 0.95), rgba(111, 231, 255, 0.5) 60%, rgba(0, 0, 0, 0) 100%); opacity: 0; mix-blend-mode: screen; }
+
+.footage-src { position: fixed; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }

@@ -65,7 +65,7 @@
 /* ==========================================================================
    SHOT 6
    ========================================================================== */
-.s6-dark { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2), #000 70%); }
+.s6-dark { position: absolute; inset: 0; background: #000; }
 .s6-cmd { position: absolute; left: 50%; top: 950px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 10px 22px; border: 1px solid var(--line-hi); background: rgba(4, 10, 14, 0.85); white-space: nowrap; }
 .s6-cmd-ic { color: var(--hi); width: 22px; height: 22px; }
 .s6-cmd-t { font-size: 18px; color: var(--hi); }
@@ -79,4 +79,4 @@
 .s6-res-h { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-dim); letter-spacing: 0.14em; }
 .s6-mark { width: 12px; height: 12px; background: var(--red); box-shadow: 0 0 12px var(--red); }
 .s6-en { font-size: 44px; letter-spacing: 0.4em; padding-left: 0.4em; color: var(--red); font-weight: 600; height: 60px; white-space: nowrap; text-shadow: 0 0 20px rgba(255, 59, 48, 0.5); }
-.s6-cn { font-size: 132px; font-weight: 700; color: var(--red); letter-spacing: 0.14em; padding-left: 0.14em; line-height: 1.1; white-space: nowrap; text-shadow: 0 0 40px rgba(255, 59, 48, 0.45); }
+.s6-cn { font-size: 120px; font-weight: 700; color: var(--red); letter-spacing: 0.14em; padding-left: 0.14em; line-height: 1.1; white-space: nowrap; text-shadow: 0 0 40px rgba(255, 59, 48, 0.45); }

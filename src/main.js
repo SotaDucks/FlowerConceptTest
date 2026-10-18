@@ -23,7 +23,8 @@ import { Engine } from './core/engine.js';
 import { GlobalHud } from './components/globalHud.js';
 import { Player } from './player/player.js';
 import { loadPlate } from './core/plate.js';
-import { PLATE } from './content.js';
+import { loopVideo, setVideoClock } from './core/loopVideo.js';
+import { PLATE, S7 } from './content.js';
 import { Calib, loadCalibOverride } from './player/calib.js';
 import Shot1 from './shots/shot1.js';
 import Shot2 from './shots/shot2.js';
@@ -53,6 +54,12 @@ async function boot() {
   step('LOADING PLATE', 0.1);
   if (loadCalibOverride()) console.info('[NR] plate calibration override loaded from localStorage');
   const plate = await loadPlate(PLATE);
+  step('LOADING FOOTAGE', 0.2);
+  // the plate footage is drawn into canvases; keep its <video> in the document so it decodes
+  const footage = loopVideo(PLATE.video.src);
+  footage.el.className = 'footage-src';
+  document.body.appendChild(footage.el);
+  await Promise.all([footage.ready(), loopVideo(S7.video).ready()]);
 
   step('BUILDING SHOTS', 0.35);
   const shots = [new Shot1(), new Shot2(), new Shot3(), new Shot4(), new Shot5(), new Shot6(), new Shot7()];
@@ -62,8 +69,6 @@ async function boot() {
     await new Promise((r) => setTimeout(r, 0));
   }
   const hud = new GlobalHud(stage);
-  // shot 6 re-uses shot 5's interface
-  shots[5].base = shots[4];
 
   step('LOADING TYPE', 0.7);
   const glyphs = stage.textContent + '0123456789/\\<>_=+#*ABCDEFHKMNRSTXZ░▒▓■□▣▤▥▦▧▨▩▪▌✓—·／：（）';
@@ -72,6 +77,7 @@ async function boot() {
 
   const params = new URLSearchParams(location.search);
   const engine = new Engine({ stage, shots, hud, fps: Number(params.get('fps')) || 25 });
+  setVideoClock(engine);
   let calib = null;
   const player = new Player(document.getElementById('player'), engine, {
     onCalib: () => (calib ||= new Calib(stage, engine)).toggle(),

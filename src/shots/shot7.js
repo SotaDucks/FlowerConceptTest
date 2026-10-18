@@ -7,10 +7,18 @@ import { clamp, lerp, seg, ease, smooth, hash, hash2, fbm1 } from '../core/util.
 import { Brackets, lerpRect, lockRect, panel, field, icon, statusTag } from '../components/hud.js';
 import { Trace, Radar, tickBar, ecg } from '../components/charts.js';
 import { idBar } from '../components/idbar.js';
-import { HeadScene } from '../gl/headScene.js';
+import { loopVideo } from '../core/loopVideo.js';
 import { S7 } from '../content.js';
 
 const HW = 846, HH = 720;
+// face landmarks in HumanMovement.mp4 source px (834 × 1112); the clip is
+// width-fitted and top-aligned in the portrait, so px scale by HW / 834.
+const VID_W = 834;
+const LANDMARKS = {
+  top: [415, 60], brow: [415, 195], eyeL: [375, 215], eyeR: [455, 215], nose: [415, 268],
+  cheekL: [325, 265], cheekR: [505, 265], mouthL: [385, 305], mouthR: [448, 305],
+  jawL: [335, 315], jawR: [497, 315], chin: [415, 345],
+};
 const PORTRAIT_CENTER = { x: 490, y: 190, w: 940, h: 800 };
 const PORTRAIT_LEFT = { x: 48, y: 196, w: 552, h: 470 };
 const T = { id: 2.7, human: 3.5, active: 4.3, move: 5.4, left: 6.6, bio: 7.4, tag: 10.4, match: 12.4, radar: 14.0, log: 15.8, footer: 18.4 };
@@ -56,18 +64,20 @@ export default class Shot7 {
     const cues = (this.cues = new Cues());
     R.appendChild(h('div', { class: 'bg-grid L-bg' }));
 
-    // ---- portrait (head scan) with face overlay, inside one transformed wrapper
-    this.head = new HeadScene(HW, HH);
+    // ---- portrait (looping footage, scanned in) with face overlay, inside one transformed wrapper
+    this.vid = loopVideo(S7.video);
+    this.vid.el.classList.add('s7-video');
     this.portrait = h('div', { class: 's7-portrait L-plate' });
     css(this.portrait, { width: HW + 'px', height: HH + 'px' });
-    this.head.canvas.classList.add('s7-head');
+    this.vidTint = h('div', { class: 's7-video-tint' });
+    this.vidScan = h('div', { class: 's7-video-scan' });
     this.faceSvg = s('svg', { class: 's7-face', viewBox: `0 0 ${HW} ${HH}`, width: HW, height: HH });
     this.faceWire = s('path', { class: 's7-face-wire' });
     this.faceDots = s('g', { class: 's7-face-dots' });
     this.faceSvg.append(this.faceWire, this.faceDots);
-    this.portrait.append(h('div', { class: 's7-portrait-bg' }), this.head.canvas, this.faceSvg);
+    this.portrait.append(h('div', { class: 's7-portrait-bg' }), this.vid.el, this.vidTint, this.vidScan, this.faceSvg);
     R.appendChild(this.portrait);
-    this.lmNames = Object.keys(this.head.landmarks);
+    this.lmNames = Object.keys(LANDMARKS);
     this.lmDots = this.lmNames.map(() => {
       const c = s('rect', { width: 6, height: 6, x: -3, y: -3 });
       this.faceDots.appendChild(c);
@@ -227,20 +237,16 @@ export default class Shot7 {
   }
 
   render(t) {
-    // ---- head scan (same stages as the plant: points -> contour -> surface)
-    const scanY = lerp(1.35, -2.8, ease.inOutSine(seg(t, 0.35, 2.3)));
-    const yaw = 0.2 * Math.sin(t * 0.33 + 0.4) * lerp(1, 0.6, seg(t, T.move, 1));
-    const pitch = -0.04 + 0.03 * Math.sin(t * 0.27);
-    this.head.render({
-      yaw,
-      pitch,
-      time: t,
-      scanY,
-      pts: seg(t, 0.35, 0.5) * lerp(1, 0.22, seg(t, 2.4, 1.4)),
-      lines: seg(t, 0.8, 0.9) * lerp(1, 0.5, seg(t, 3.0, 1.0)),
-      surf: smooth(seg(t, 1.6, 1.4)),
-      alpha: 1,
+    // ---- portrait scan (same stages as the plant: sweep -> contour -> natural surface)
+    this.vid.sync();
+    const sweep = ease.inOutSine(seg(t, 0.35, 2.3));
+    const surf = smooth(seg(t, 1.6, 1.4));
+    css(this.vid.el, {
+      clipPath: `inset(0 0 ${((1 - sweep) * 100).toFixed(2)}% 0)`,
+      filter: `grayscale(${(1 - surf).toFixed(3)}) brightness(${lerp(1.25, 1, surf).toFixed(3)}) contrast(${lerp(1.3, 1.02, surf).toFixed(3)})`,
     });
+    css(this.vidTint, { opacity: ((1 - surf) * 0.75).toFixed(3) });
+    css(this.vidScan, { opacity: String(seg(t, 0.35, 0.2) * (1 - seg(t, 2.6, 0.3))), transform: `translateY(${(sweep * HH).toFixed(1)}px)` });
     const mv = ease.inOutCubic(seg(t, T.move, T.left - T.move));
     const pr = lerpRect(PORTRAIT_CENTER, PORTRAIT_LEFT, mv);
     css(this.portrait, { transform: `translate(${pr.x.toFixed(1)}px, ${pr.y.toFixed(1)}px) scale(${(pr.w / HW).toFixed(5)})` });
@@ -254,7 +260,7 @@ export default class Shot7 {
     // face landmarks + wire (in canvas px, inside the portrait wrapper)
     const P = {};
     this.lmNames.forEach((n, i) => {
-      const [x, y] = this.head.project(n);
+      const [x, y] = LANDMARKS[n].map((c) => (c * HW) / VID_W);
       P[n] = [x, y];
       attr(this.lmDots[i], { transform: `translate(${x.toFixed(1)},${y.toFixed(1)})` });
     });

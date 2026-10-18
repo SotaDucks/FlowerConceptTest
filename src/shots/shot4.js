@@ -33,7 +33,7 @@ export default class Shot4 {
     R.appendChild(this.gl.canvas);
 
     // plate shrinking into a live-feed card
-    this.plate = new PlateView(plate);
+    this.plate = new PlateView(plate, { video: true });
     this.plateWrap = h('div', { class: 's4-plate' }, [this.plate.el]);
     R.appendChild(this.plateWrap);
     this.card = h('div', { class: 's4-card L-ui' }, [

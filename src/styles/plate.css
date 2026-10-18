@@ -39,6 +39,7 @@
 /* ---------- inset ---------- */
 .inset { position: relative; overflow: hidden; border: 1px solid var(--line2); background: #000; }
 .inset-img { position: absolute; inset: 0; background-repeat: no-repeat; }
+.inset-photo { background-size: cover; background-position: center; transform-origin: 50% 50%; }
 .inset.mono-mode .inset-img { filter: grayscale(1) contrast(2.4) brightness(0.9) !important; }
 .inset.mono-mode::after { content: ""; position: absolute; inset: 0; background: rgba(40, 170, 210, 0.45); mix-blend-mode: color; }
 .inset-grid {

@@ -1,8 +1,10 @@
-// The VR-environment plate (shots 2–5): graded base image, natural-colour
+// The VR-environment plate (shots 2–5): graded base image (or looping footage
+// with { video: true }, drawn into canvases so all layers share one frame), natural-colour
 // spotlight for the organ under analysis, mirrored edge fill, and a mapping
 // from normalised image coords to stage px for anchoring UI to real features.
 import { h, css, canvas2d } from '../core/dom.js';
 import { clamp, hash } from '../core/util.js';
+import { loopVideo } from '../core/loopVideo.js';
 
 export class PlateView {
   constructor(plate, o = {}) {
@@ -12,9 +14,12 @@ export class PlateView {
     this.el = h('div', { class: `plate L-plate ${o.cls || ''}` });
     this.inner = h('div', { class: 'plate-inner' });
     css(this.inner, { width: this.iw + 'px', height: this.ih + 'px' });
-    const img = (cls) => h('img', { src: plate.src, class: `plate-img ${cls}`, draggable: false });
-    this.mirrorL = img('plate-mirror plate-mirror-l');
-    this.mirrorR = img('plate-mirror plate-mirror-r');
+    this.vid = o.video ? loopVideo(plate.cfg.video.src) : null;
+    const img = this.vid
+      ? (cls, scale = 1) => h('canvas', { width: 1280 * scale, height: Math.round((1280 * scale) / plate.aspect), class: `plate-img ${cls}` })
+      : (cls) => h('img', { src: plate.src, class: `plate-img ${cls}`, draggable: false });
+    this.mirrorL = img('plate-mirror plate-mirror-l', 0.5);
+    this.mirrorR = img('plate-mirror plate-mirror-r', 0.5);
     this.graded = img('plate-graded');
     this.natural = img('plate-natural');
     this.inner.append(this.mirrorL, this.mirrorR, this.graded, this.natural);
@@ -26,6 +31,18 @@ export class PlateView {
   set(x, y, w) {
     this.view = { x, y, w, h: w / this.plate.aspect };
     css(this.inner, { transform: `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${(w / this.iw).toFixed(5)})` });
+    if (this.vid) this.drawFrame();
+  }
+
+  drawFrame() {
+    const v = this.vid;
+    v.sync();
+    if (!v.hasFrame) return;
+    const [fu, fv, fw, fh] = this.plate.cfg.video.fit;
+    for (const c of [this.graded, this.natural, this.mirrorL, this.mirrorR]) {
+      const W = c.width, H = c.height;
+      (c._ctx ||= c.getContext('2d')).drawImage(v.el, fu * W, fv * H, fw * W, fh * H);
+    }
   }
 
   toStage(u, v) {
@@ -57,27 +74,25 @@ export class PlateView {
   }
 }
 
-// zoomed crop of the plate for analysis insets
-export class PlateInset {
-  constructor(plate, w, hh, o = {}) {
-    this.plate = plate;
+// analysis inset: real scan photos, cross-faded one per stage
+export class PhotoInset {
+  constructor(srcs, w, hh, o = {}) {
     this.w = w;
     this.h = hh;
     this.el = h('div', { class: `inset ${o.cls || ''}` });
     css(this.el, { width: w + 'px', height: hh + 'px' });
-    this.img = h('div', { class: 'inset-img' });
-    css(this.img, { backgroundImage: `url("${plate.src}")` });
-    this.el.append(this.img, h('div', { class: 'inset-grid' }), h('div', { class: 'inset-scan' }));
+    this.imgs = srcs.map((src) => h('div', { class: 'inset-img inset-photo', style: { backgroundImage: `url("${src}")` } }));
+    this.el.append(...this.imgs, h('div', { class: 'inset-grid' }), h('div', { class: 'inset-scan' }));
   }
-  // show image region centred at (u,v) with normalised width fw (height from aspect)
-  show(u, v, fw, o = {}) {
-    const scale = this.w / (fw * 1); // px per unit-u
-    const bw = scale, bh = scale / this.plate.aspect; // background size in px for full image
-    const x = -(u * bw - this.w / 2), y = -(v * bh - this.h / 2);
-    css(this.img, {
-      backgroundSize: `${bw.toFixed(1)}px ${bh.toFixed(1)}px`,
-      backgroundPosition: `${x.toFixed(1)}px ${y.toFixed(1)}px`,
-      filter: `saturate(${o.sat ?? 0.85}) brightness(${o.bri ?? 1.05}) contrast(1.08)`,
+  // cur / prev photo index, m = cross-fade 0..1, zoom = slow push-in scale
+  show(cur, prev, m, o = {}) {
+    this.imgs.forEach((el, i) => {
+      const a = i === cur ? (cur === prev ? 1 : m) : i === prev ? 1 - m : 0;
+      css(el, {
+        opacity: a.toFixed(3),
+        transform: `scale(${(i === cur ? o.zoom ?? 1 : 1).toFixed(4)})`,
+        filter: `saturate(${o.sat ?? 1}) brightness(${o.bri ?? 1}) contrast(1.05)`,
+      });
     });
     css(this.el, { '--scan': `${((o.scan ?? 0) * 100).toFixed(1)}%` });
   }

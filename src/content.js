@@ -1,6 +1,12 @@
 // All on-screen copy, story data and plate calibration live here.
 // Edit this file to change wording, numbers, or re-anchor a new plate image.
-import plateUrl from '../img/镜头345图片.png';
+import plateUrl from '../img/旧占位符/镜头345图片.png';
+import plateVideoUrl from '../img/循环视频/FlowerMovement.mp4';
+import humanVideoUrl from '../img/循环视频/HumanMovement.mp4';
+import scan1 from '../img/扫描页真实图片/scan1.png';
+import scan2 from '../img/扫描页真实图片/scan2.png';
+import scan3 from '../img/扫描页真实图片/scan3.png';
+import scan4 from '../img/扫描页真实图片/scan4.png';
 
 export const SYSTEM = {
   name: 'NATURE RECONSTRUCTION SYSTEM',
@@ -44,6 +50,8 @@ export const S2 = {
 };
 
 export const S3 = {
+  // real scan photos for the organ-analysis window, one per stage (in stage order)
+  scans: [scan1, scan2, scan3, scan4],
   stages: [
     { key: 'plant', cn: '全株识别', en: 'WHOLE-PLANT IDENTIFICATION' },
     { key: 'leaf', cn: '叶片形态', en: 'LEAF MORPHOLOGY' },
@@ -99,9 +107,10 @@ export const S5 = {
   underground: { cn: '地下生态数据', stateCn: '未获取', en: 'UNDERGROUND ECOLOGY DATA', state: 'NOT ACQUIRED' },
 };
 
-export const S6 = { en: 'CLOSE FAILED', cn: '关闭失败', cmd: 'SESSION.EXIT' };
+export const S6 = { en: 'SYSTEM CLOSE FAILED', cn: '系统关闭失败', cmd: 'SESSION.EXIT' };
 
 export const S7 = {
+  video: humanVideoUrl,
   specimenEn: 'SPECIMEN 000',
   specimenCn: '样本 000 号',
   humanEn: 'HUMAN',
@@ -162,6 +171,9 @@ export const S7 = {
 // Frames are [u, v, w, h]. Press C in the player to see / drag them.
 export const PLATE = {
   src: plateUrl,
+  // looping footage for shots 3–4. `fit` places the video frame in plate
+  // coords [u, v, w, h] so the calibration below still lands on the plant.
+  video: { src: plateVideoUrl, fit: [0, 0, 1.0132, 1.033] },
   plantPoly: [
     [0.544, 0.105], [0.562, 0.22], [0.552, 0.33], [0.6, 0.43], [0.628, 0.515],
     [0.585, 0.5], [0.566, 0.54], [0.53, 0.565], [0.5, 0.6], [0.545, 0.68],

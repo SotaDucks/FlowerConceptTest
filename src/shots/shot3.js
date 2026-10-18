@@ -5,7 +5,7 @@ import { Cues } from '../core/cues.js';
 import { clamp, lerp, seg, ease, smooth, hash } from '../core/util.js';
 import { Brackets, Reticle, Leader, lockRect, panel, field, statusTag, icon } from '../components/hud.js';
 import { tickBar } from '../components/charts.js';
-import { PlateView, PlateInset, FeatureLayer } from '../components/plateView.js';
+import { PlateView, PhotoInset, FeatureLayer } from '../components/plateView.js';
 import { idBar } from '../components/idbar.js';
 import { SPECIES, S3, PLATE } from '../content.js';
 
@@ -34,7 +34,7 @@ export default class Shot3 {
     this.plateData = plate;
     const cues = (this.cues = new Cues());
     R.appendChild(h('div', { class: 'bg-grid L-bg' }));
-    this.plate = new PlateView(plate);
+    this.plate = new PlateView(plate, { video: true });
     R.appendChild(this.plate.el);
     R.appendChild(h('div', { class: 's3-sideshade L-ui' }));
     this.feat = new FeatureLayer();
@@ -107,7 +107,7 @@ export default class Shot3 {
     const P = (this.rp = panel({ x: 1462, y: 100, w: 410, title: { en: 'ORGAN ANALYSIS', cn: '器官分析' }, idx: 'C', cls: 'L-ui s3-right' }));
     this.stageNo = h('span', { class: 'ph-tag' });
     P._head.appendChild(this.stageNo);
-    this.inset = new PlateInset(plate, 374, 226);
+    this.inset = new PhotoInset(S3.scans, 374, 226);
     this.insetCap = h('div', { class: 's3-inset-cap mono' });
     const insetWrap = h('div', { class: 's3-inset' }, [this.inset.el, h('div', { class: 's3-inset-x' }), this.insetCap]);
     P._body.appendChild(insetWrap);
@@ -308,27 +308,15 @@ export default class Shot3 {
     css(this.dim, { opacity: String(seg(t, ST[3] + 2.6, 0.3)) });
     css(this.dimLabel, { opacity: String(seg(t, ST[3] + 3.0, 0.4)), transform: `translate(${(mx - 70).toFixed(1)}px, ${(dy + 6).toFixed(1)}px)` });
 
-    // inset: whole-plant silhouette, then organ crops
-    const IN = [
-      { u: 0.4, v: 0.55, fw: 0.66, sat: 0, bri: 1.5 },
-      { u: A.leaf[0], v: A.leaf[1], fw: 0.17, sat: 0.9, bri: 1.25 },
-      { u: A.texture[0], v: A.texture[1], fw: 0.06, sat: 0.95, bri: 1.4 },
-      { u: 0.48, v: 0.33, fw: 0.3, sat: 1, bri: 1.2 },
-    ];
+    // inset: one real scan photo per stage, cross-faded, slow push-in
     const ki = Math.max(0, k);
     const pi = Math.max(0, ki - 1);
     const m = ease.inOutCubic(seg(t, ST[ki] + 0.5, 0.9));
-    const cur = IN[ki], pre = IN[pi];
-    const fwz = Math.exp(lerp(Math.log(pre.fw), Math.log(cur.fw), m));
-    this.inset.show(lerp(pre.u, cur.u, m), lerp(pre.v, cur.v, m), fwz, {
-      sat: lerp(pre.sat, cur.sat, m),
-      bri: lerp(pre.bri, cur.bri, m),
-      scan: seg(t, ST[ki] + 0.5, 1.2),
-    });
-    css(this.inset.el, { filter: ki === 0 && m < 1 ? '' : '', '--mono': ki === 0 ? '1' : '0' });
-    this.inset.el.classList.toggle('mono-mode', ki === 0 && t < ST[1] + 0.9);
-    const zoom = 0.66 / fwz;
-    txt(this.insetCap, `MAG ×${zoom.toFixed(1)}   SRC ${lerp(pre.u, cur.u, m).toFixed(3)}, ${lerp(pre.v, cur.v, m).toFixed(3)}   ${['SILHOUETTE', 'LEAF', 'TEXTURE', 'FLOWER'][ki]}`);
+    const push = 1 + 0.08 * ease.inOutSine(seg(t, ST[ki] + 0.5, (ST[ki + 1] ?? END) - ST[ki]));
+    this.inset.show(ki, pi, m, { zoom: push, scan: seg(t, ST[ki] + 0.5, 1.2) });
+    this.inset.el.classList.toggle('mono-mode', ki === 0 && t < ST[0] + 1.6);
+    const mag = [1.0, 2.6, 4.2, 3.0][ki] * push;
+    txt(this.insetCap, `MAG ×${mag.toFixed(1)}   SRC SCAN-0${ki + 1}   ${['WHOLE PLANT', 'LEAF', 'TEXTURE', 'FLOWER'][ki]}`);
     txt(this.stageNo, `${String(ki + 1).padStart(2, '0')} / 04`);
 
     // sequence index

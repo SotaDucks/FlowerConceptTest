@@ -10,7 +10,9 @@
     rgba(3, 9, 13, 0.6);
   border: 1px solid rgba(130, 215, 235, 0.14);
 }
-.s7-head { position: absolute; left: 0; top: 0; width: 846px; height: 720px; }
+.s7-video { position: absolute; left: 0; top: 0; width: 846px; height: 720px; object-fit: cover; object-position: 50% 0; }
+.s7-video-tint { position: absolute; inset: 0; background: rgba(40, 170, 210, 0.55); mix-blend-mode: color; pointer-events: none; }
+.s7-video-scan { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
 .s7-face { position: absolute; left: 0; top: 0; overflow: visible; }
 .s7-face-wire { fill: none; stroke: rgba(234, 255, 255, 0.55); stroke-width: 1.2; }
 .s7-face-dots rect { fill: var(--hi); }

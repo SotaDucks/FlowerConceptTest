@@ -1,15 +1,14 @@
-// SHOT 6 — CLOSE FAILED / 关闭失败
-// The operator exits; the interface folds inward, stalls, re-opens; failure holds.
-// Re-uses shot 5's interface underneath so the viewer stays in the same system.
-import { h, s, css, txt, attr, stageSvg } from '../core/dom.js';
+// SHOT 6 — SYSTEM CLOSE FAILED / 系统关闭失败
+// The operator exits; on a pure black screen the close stalls and the failure holds.
+import { h, css } from '../core/dom.js';
 import { Cues } from '../core/cues.js';
-import { clamp, lerp, seg, ease, hash } from '../core/util.js';
-import { Brackets, icon } from '../components/hud.js';
+import { seg, ease, hash } from '../core/util.js';
+import { icon } from '../components/hud.js';
 import { S6 } from '../content.js';
 
 export default class Shot6 {
   constructor() {
-    this.title = '关闭失败';
+    this.title = '系统关闭失败';
     this.duration = 5;
     this.phase = { en: 'PHASE 05 · DATA INTEGRITY', cn: '数据完整性' };
     this.root = h('div', { class: 'shot s6' });
@@ -18,11 +17,7 @@ export default class Shot6 {
   init() {
     const R = this.root;
     const cues = (this.cues = new Cues());
-    this.dark = h('div', { class: 's6-dark L-fx' });
-    R.appendChild(this.dark);
-    const svg = stageSvg('L-ui');
-    R.appendChild(svg);
-    this.frame = new Brackets(svg, { arm: 40, cls: 'white' });
+    R.appendChild(h('div', { class: 's6-dark' }));
 
     // exit command
     this.cmd = h('div', { class: 's6-cmd L-ui' }, [
@@ -51,26 +46,8 @@ export default class Shot6 {
     cues.add(this.resCn, 3.1, { mode: 'wipe', dur: 0.35 });
   }
 
-  render(t, ctx) {
-    // shot 5 interface underneath, at its final state
-    const base = ctx.borrow(4, this.base.duration);
-    const fold = ease.inOutCubic(seg(t, 0.55, 0.9)); // borders contract inward
-    const reopen = ease.outBack(seg(t, 2.1, 0.55)); // stall, then spring back
+  render(t) {
     const stall = t >= 1.45 && t < 2.1;
-    const jit = stall ? (hash(Math.floor(t * 40)) - 0.5) * 0.006 : 0;
-    const k = lerp(1, 0.18, fold) + (1 - lerp(1, 0.18, fold)) * reopen + jit;
-    const after = seg(t, 2.6, 0.5);
-    const bri = lerp(1, 0.35, fold * (1 - reopen));
-    css(base.root, {
-      transform: `scale(${k.toFixed(4)}, ${(k * lerp(1, 0.6, fold * (1 - reopen))).toFixed(4)})`,
-      filter: `brightness(${lerp(bri, 0.42, after).toFixed(3)}) saturate(${lerp(1, 0.7, after).toFixed(3)})`,
-    });
-    css(this.dark, { opacity: String(Math.max(fold * (1 - reopen), 0)) });
-
-    // white frame collapsing with the interface
-    const w = 1920 * k, hh = 1080 * k * lerp(1, 0.6, fold * (1 - reopen));
-    const fr = { x: 960 - w / 2 - 12, y: 540 - hh / 2 - 12, w: w + 24, h: hh + 24 };
-    this.frame.set(fr, { alpha: seg(t, 0.55, 0.2) * (1 - seg(t, 2.3, 0.4)), close: 0 });
 
     // closing indicator stalls at a fixed point
     const prog = Math.min(0.87, ease.outCubic(seg(t, 0.6, 0.85)) * 0.87);
@@ -82,6 +59,7 @@ export default class Shot6 {
     // the failure flicker on the result text is brief, then it holds
     const fl = t > 2.9 && t < 3.25 && hash(Math.floor(t * 30)) > 0.5 ? 0.4 : 1;
     css(this.result, { filter: `brightness(${fl})` });
-    return { top: true, rails: true, alpha: lerp(1, 0.4, fold * (1 - reopen)) };
+    // pure black: no system chrome either
+    return { top: false, rails: false, bottom: false };
   }
 }
